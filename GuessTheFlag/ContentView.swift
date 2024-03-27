@@ -37,6 +37,7 @@ struct ContentView: View {
                             .foregroundStyle(.secondary)
                             .font(.subheadline.weight(.heavy))
                         Text(countries[correctAnswer])
+                            .foregroundStyle(.primary)
                             .font(.largeTitle.weight(.semibold))
                     }
 
