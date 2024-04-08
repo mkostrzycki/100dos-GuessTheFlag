@@ -20,6 +20,9 @@ struct ContentView: View {
     @State private var round = 1
     @State private var isGameOver = false
 
+    @State private var rotationAmount = 0.0
+    @State private var isFaded = false
+
     struct FlagImage: View {
         var name: String
 
@@ -58,10 +61,21 @@ struct ContentView: View {
                     }
 
                     ForEach(0..<3) { number in
-                        Button {
-                            flagTapped(number)
-                        } label: {
-                            FlagImage(name: countries[number])
+                        if (number == userAnswer) { // TODO: Can I do it without if-else?
+                            Button {
+                                flagTapped(number)
+                            } label: {
+                                FlagImage(name: countries[number])
+                            }
+                            .rotation3DEffect(.degrees(rotationAmount), axis: (x: 0, y: 1, z: 0))
+                        } else {
+                            Button {
+                                flagTapped(number)
+                            } label: {
+                                FlagImage(name: countries[number])
+                            }
+                            .opacity(isFaded ? 0.25 : 1)
+                            .saturation(isFaded ? 0 : 1)
                         }
                     }
                 }
@@ -97,6 +111,10 @@ struct ContentView: View {
 
     func flagTapped(_ number: Int) {
         userAnswer = number
+        withAnimation(.spring(duration: 1, bounce: 0.5)) {
+            rotationAmount += 360
+            isFaded = true
+        }
         if number == correctAnswer {
             scoreTitle = "Correct"
             userScore += 1
@@ -116,6 +134,7 @@ struct ContentView: View {
         }
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        isFaded = false
     }
 
     func resetGame() {
